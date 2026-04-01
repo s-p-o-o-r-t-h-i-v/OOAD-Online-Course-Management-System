@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Evaluate Submission</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#0f1117;--surface:#181c27;--surface2:#1e2335;--border:#2a2f45;--accent:#6c63ff;--accent2:#a78bfa;--green:#34d399;--amber:#fbbf24;--text:#e2e8f0;--muted:#8892a4}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+    .sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;z-index:100}
+    .logo{padding:0 24px 28px;border-bottom:1px solid var(--border)}
+    .logo h1{font-family:'Playfair Display',serif;font-size:20px;color:var(--accent2)}
+    .logo p{font-size:11px;color:var(--muted);margin-top:2px}
+    nav{padding:20px 12px;flex:1}
+    nav a{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px}
+    nav a:hover,nav a.active{background:rgba(108,99,255,.12);color:var(--accent2)}
+    nav a .icon{font-size:16px;width:20px;text-align:center}
+    .main{margin-left:240px;padding:36px 40px;flex:1}
+    .page-header{margin-bottom:28px}
+    .page-header h2{font-family:'Playfair Display',serif;font-size:28px}
+    .page-header p{color:var(--muted);font-size:14px;margin-top:4px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+    .card h3{font-size:15px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+    .info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:14px}
+    .info-row:last-child{border-bottom:none}
+    .info-row .lbl{color:var(--muted)}
+    .content-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:14px;line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto}
+    .strategy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+    .strategy-option input[type=radio]{display:none}
+    .strategy-card{border:2px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s;text-align:center}
+    .strategy-option input:checked + .strategy-card{border-color:var(--accent);background:rgba(108,99,255,.1)}
+    .strategy-card .s-icon{font-size:24px;margin-bottom:6px}
+    .strategy-card .s-name{font-size:13px;font-weight:600;margin-bottom:4px}
+    .strategy-card .s-desc{font-size:11px;color:var(--muted)}
+    .field{margin-bottom:20px}
+    label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+    input[type=number],textarea{width:100%;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color .2s;outline:none}
+    input:focus,textarea:focus{border-color:var(--accent)}
+    textarea{resize:vertical;min-height:80px}
+    #manual-grade-field{display:none}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-primary:hover{background:#5a52e0;transform:translateY(-1px)}
+    .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+    .btn-ghost:hover{color:var(--text);border-color:var(--text)}
+    .form-footer{display:flex;gap:12px;margin-top:24px}
+    .ocp-note{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--accent2);margin-bottom:20px}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo"><h1>EduPortal</h1><p>Instructor Panel</p></div>
+  <nav>
+    <a href="/instructor/dashboard"><span class="icon">🏠</span> Dashboard</a>
+    <a href="/instructor/course/new"><span class="icon">📚</span> Create Course</a>
+    <a href="/instructor/material/new"><span class="icon">📎</span> Upload Material</a>
+    <a href="/instructor/assignment/new"><span class="icon">📝</span> Assignment</a>
+    <a href="/instructor/submissions" class="active"><span class="icon">✅</span> Submissions</a>
+  </nav>
+</aside>
+<main class="main">
+  <div class="page-header">
+    <h2>Evaluate Submission</h2>
+    <p>Choose a grading strategy and submit your evaluation.</p>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h3>Submission Details</h3>
+        <div class="info-row">
+          <span class="lbl">Student</span>
+          <span th:text="${submission.studentName != null ? submission.studentName : 'Student #' + submission.studentId}">—</span>
+        </div>
+        <div class="info-row">
+          <span class="lbl">Assignment ID</span>
+          <span th:text="${submission.assignmentId}">—</span>
+        </div>
+        <div class="info-row">
+          <span class="lbl">Current Grade</span>
+          <span th:text="${submission.grade != null ? submission.grade + '/100' : 'Not graded yet'}">—</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Submitted Answer</h3>
+        <div class="content-box" th:text="${submission.content}">No content.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Grading</h3>
+        <div class="ocp-note">⚡ Strategy Pattern — select how this submission gets graded. Each strategy implements the same interface without modifying core logic (OCP).</div>
+        <form th:action="@{/instructor/submission/{id}/evaluate(id=${submission.id})}" method="post">
+          <div class="field">
+            <label>Grading Strategy</label>
+            <div class="strategy-grid">
+              <label class="strategy-option">
+                <input type="radio" name="strategyType" value="AUTO" checked onchange="toggleManual(this.value)"/>
+                <div class="strategy-card">
+                  <div class="s-icon">🤖</div>
+                  <div class="s-name">Auto</div>
+                  <div class="s-desc">System scores based on content</div>
+                </div>
+              </label>
+              <label class="strategy-option">
+                <input type="radio" name="strategyType" value="MANUAL" onchange="toggleManual(this.value)"/>
+                <div class="strategy-card">
+                  <div class="s-icon">✏️</div>
+                  <div class="s-name">Manual</div>
+                  <div class="s-desc">You enter the grade directly</div>
+                </div>
+              </label>
+              <label class="strategy-option">
+                <input type="radio" name="strategyType" value="RUBRIC" onchange="toggleManual(this.value)"/>
+                <div class="strategy-card">
+                  <div class="s-icon">📋</div>
+                  <div class="s-name">Rubric</div>
+                  <div class="s-desc">Criteria-based scoring</div>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="field" id="manual-grade-field">
+            <label>Manual Grade (out of 100)</label>
+            <input type="number" name="manualGrade" min="0" max="100" placeholder="e.g. 85"/>
+          </div>
+          <div class="field">
+            <label>Feedback to Student</label>
+            <textarea name="feedback" placeholder="Add comments or feedback..."></textarea>
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary">✅ Submit Evaluation</button>
+            <a href="/instructor/submissions" class="btn btn-ghost">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  function toggleManual(val) {
+    document.getElementById('manual-grade-field').style.display = val === 'MANUAL' ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Instructor Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0f1117;--surface:#181c27;--surface2:#1e2335;--border:#2a2f45;--accent:#6c63ff;--accent2:#a78bfa;--green:#34d399;--amber:#fbbf24;--red:#f87171;--text:#e2e8f0;--muted:#8892a4; }
+    body { font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh; }
+    .sidebar { position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;z-index:100; }
+    .logo { padding:0 24px 28px;border-bottom:1px solid var(--border); }
+    .logo h1 { font-family:'Playfair Display',serif;font-size:20px;color:var(--accent2); }
+    .logo p { font-size:11px;color:var(--muted);margin-top:2px; }
+    nav { padding:20px 12px;flex:1; }
+    nav a { display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px; }
+    nav a:hover, nav a.active { background:rgba(108,99,255,.12);color:var(--accent2); }
+    nav a .icon { font-size:16px;width:20px;text-align:center; }
+    .main { margin-left:240px;padding:36px 40px;min-height:100vh; }
+    .page-header { margin-bottom:32px; }
+    .page-header h2 { font-family:'Playfair Display',serif;font-size:28px;font-weight:600; }
+    .page-header p { color:var(--muted);font-size:14px;margin-top:4px; }
+    .stats { display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:36px; }
+    .stat-card { background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px; }
+    .stat-card .label { font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px; }
+    .stat-card .value { font-size:32px;font-weight:600;margin:6px 0 2px; }
+    .stat-card .sub { font-size:12px;color:var(--muted); }
+    .stat-card.purple .value { color:var(--accent2); }
+    .stat-card.green .value { color:var(--green); }
+    .stat-card.amber .value { color:var(--amber); }
+    .stat-card.red .value { color:var(--red); }
+    .section-title { font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px; }
+    .actions { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:36px; }
+    .action-btn { display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:all .2s;text-align:center; }
+    .action-btn:hover { border-color:var(--accent);background:rgba(108,99,255,.08);transform:translateY(-1px); }
+    .action-btn .emoji { font-size:24px; }
+    .card { background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px; }
+    .card-header { padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .card-header h3 { font-size:15px;font-weight:600; }
+    .badge { display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600; }
+    .badge.purple { background:rgba(108,99,255,.18);color:var(--accent2); }
+    .badge.green { background:rgba(52,211,153,.15);color:var(--green); }
+    .badge.amber { background:rgba(251,191,36,.15);color:var(--amber); }
+    .badge.blue { background:rgba(59,130,246,.15);color:#60a5fa; }
+    table { width:100%;border-collapse:collapse; }
+    th { padding:12px 22px;text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid var(--border); }
+    td { padding:14px 22px;font-size:14px;border-bottom:1px solid rgba(42,47,69,.5); }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(108,99,255,.04); }
+    .empty { padding:32px;text-align:center;color:var(--muted);font-size:14px; }
+    .link { color:var(--accent2);text-decoration:none;font-size:13px; }
+    .link:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo"><h1>EduPortal</h1><p>Instructor Panel</p></div>
+  <nav>
+    <a href="/instructor/dashboard" class="active"><span class="icon">🏠</span> Dashboard</a>
+    <a href="/instructor/course/new"><span class="icon">📚</span> Create Course</a>
+    <a href="/instructor/material/new"><span class="icon">📎</span> Upload Material</a>
+    <a href="/instructor/assignment/new"><span class="icon">📝</span> Assignment</a>
+    <a href="/instructor/submissions"><span class="icon">✅</span> Submissions</a>
+  </nav>
+</aside>
+<main class="main">
+  <div class="page-header">
+    <h2>Dashboard</h2>
+    <p>Welcome back — here's what's happening today.</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card purple">
+      <div class="label">Courses</div>
+      <div class="value" th:text="${courses != null ? courses.size() : 0}">0</div>
+      <div class="sub">Total created</div>
+    </div>
+    <div class="stat-card green">
+      <div class="label">Materials</div>
+      <div class="value" th:text="${materials != null ? materials.size() : 0}">0</div>
+      <div class="sub">Uploaded</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="label">Assignments</div>
+      <div class="value" th:text="${assignments != null ? assignments.size() : 0}">0</div>
+      <div class="sub">Created</div>
+    </div>
+    <div class="stat-card red">
+      <div class="label">Submissions</div>
+      <div class="value" th:text="${submissions != null ? submissions.size() : 0}">0</div>
+      <div class="sub">Received</div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="section-title">Quick actions</div>
+  <div class="actions">
+    <a class="action-btn" href="/instructor/course/new"><span class="emoji">📚</span> Create Course</a>
+    <a class="action-btn" href="/instructor/material/new"><span class="emoji">📎</span> Upload Material</a>
+    <a class="action-btn" href="/instructor/assignment/new"><span class="emoji">📝</span> New Assignment</a>
+    <a class="action-btn" href="/instructor/submissions"><span class="emoji">✅</span> Evaluate Submissions</a>
+  </div>
+
+  <!-- Courses -->
+  <div class="card">
+    <div class="card-header">
+      <h3>My Courses</h3>
+      <span class="badge purple" th:text="${courses != null ? courses.size() + ' courses' : '0 courses'}">0 courses</span>
+    </div>
+    <div th:if="${courses == null or courses.isEmpty()}" class="empty">No courses yet — create your first one!</div>
+    <table th:if="${courses != null and !courses.isEmpty()}">
+      <thead><tr><th>Title</th><th>Category</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr th:each="c : ${courses}">
+          <td th:text="${c.title}">—</td>
+          <td><span class="badge amber" th:text="${c.category}">—</span></td>
+          <td th:text="${c.description}">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Materials -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Uploaded Materials</h3>
+      <span class="badge blue" th:text="${materials != null ? materials.size() + ' files' : '0 files'}">0 files</span>
+    </div>
+    <div th:if="${materials == null or materials.isEmpty()}" class="empty">No materials uploaded yet.</div>
+    <table th:if="${materials != null and !materials.isEmpty()}">
+      <thead><tr><th>File Name</th><th>Type</th><th>Course ID</th><th>Link</th></tr></thead>
+      <tbody>
+        <tr th:each="m : ${materials}">
+          <td th:text="${m.fileName}">—</td>
+          <td><span class="badge purple" th:text="${m.fileType}">—</span></td>
+          <td th:text="${m.courseId}">—</td>
+          <td><a class="link" th:href="${m.fileUrl}" target="_blank">Open file →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Assignments -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Assignments</h3>
+      <span class="badge amber" th:text="${assignments != null ? assignments.size() + ' assignments' : '0 assignments'}">0 assignments</span>
+    </div>
+    <div th:if="${assignments == null or assignments.isEmpty()}" class="empty">No assignments created yet.</div>
+    <table th:if="${assignments != null and !assignments.isEmpty()}">
+      <thead><tr><th>Title</th><th>Description</th><th>Due Date</th><th>Course ID</th></tr></thead>
+      <tbody>
+        <tr th:each="a : ${assignments}">
+          <td th:text="${a.title}">—</td>
+          <td th:text="${a.description}">—</td>
+          <td th:text="${a.dueDate}">—</td>
+          <td th:text="${a.courseId}">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Submissions -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Recent Submissions</h3>
+      <a href="/instructor/submissions" style="font-size:13px;color:var(--accent2);text-decoration:none;">View all →</a>
+    </div>
+    <div th:if="${submissions == null or submissions.isEmpty()}" class="empty">No submissions yet.</div>
+    <table th:if="${submissions != null and !submissions.isEmpty()}">
+      <thead><tr><th>Student</th><th>Assignment ID</th><th>Grade</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr th:each="s : ${submissions}">
+          <td th:text="${s.studentName}">—</td>
+          <td th:text="${s.assignmentId}">—</td>
+          <td th:text="${s.grade != null ? s.grade + '/100' : '—'}">—</td>
+          <td>
+            <span th:if="${s.grade != null}" class="badge green">Graded</span>
+            <span th:if="${s.grade == null}" class="badge amber">Pending</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+</body>
+</html>
