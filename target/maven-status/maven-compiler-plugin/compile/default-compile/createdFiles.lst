@@ -1,0 +1,15 @@
+ooad\controller\StudentController.class
+ooad\model\Enrollment.class
+ooad\service\AuthService.class
+ooad\repository\AssignmentRepository.class
+ooad\repository\StudentRepository.class
+ooad\controller\AuthController.class
+ooad\OoadProjectApplication.class
+ooad\repository\UserRepository.class
+ooad\model\Submission.class
+ooad\model\User.class
+ooad\repository\EnrollmentRepository.class
+ooad\service\StudentService.class
+ooad\model\Student.class
+ooad\repository\SubmissionRepository.class
+ooad\model\Assignment.class
