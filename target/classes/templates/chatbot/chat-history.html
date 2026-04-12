@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Chat History</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0f1117;--surface:#181c27;--surface2:#1e2335;--border:#2a2f45;--accent:#6c63ff;--accent2:#a78bfa;--green:#34d399;--amber:#fbbf24;--text:#e2e8f0;--muted:#8892a4; }
+    body { font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh; }
+    .sidebar { position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 0;z-index:100; }
+    .logo { padding:0 24px 28px;border-bottom:1px solid var(--border); }
+    .logo h1 { font-family:'Playfair Display',serif;font-size:20px;color:var(--accent2); }
+    .logo p { font-size:11px;color:var(--muted);margin-top:2px; }
+    nav { padding:20px 12px;flex:1; }
+    nav a { display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px; }
+    nav a:hover, nav a.active { background:rgba(108,99,255,.12);color:var(--accent2); }
+    nav a .icon { font-size:16px;width:20px;text-align:center; }
+    .main { margin-left:240px;padding:36px 40px;min-height:100vh; }
+    .page-header { margin-bottom:32px; }
+    .page-header h2 { font-family:'Playfair Display',serif;font-size:28px;font-weight:600; }
+    .page-header p { color:var(--muted);font-size:14px;margin-top:4px; }
+    .search-card { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:28px;display:flex;gap:12px;align-items:flex-end; }
+    .search-card label { display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:500; }
+    .search-card input { padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;min-width:280px; }
+    .search-card input:focus { border-color:var(--accent); }
+    button { padding:10px 24px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif; }
+    button:hover { background:#5a52d5; }
+    .chat-card { background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px; }
+    .chat-card-header { padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center; }
+    .chat-card-header .num { font-size:12px;color:var(--muted); }
+    .chat-card-header .time { font-size:11px;color:var(--muted); }
+    .chat-body { padding:16px 20px; }
+    .question { font-size:14px;color:var(--text);font-weight:500;margin-bottom:10px; }
+    .question span { color:var(--muted);font-weight:400; }
+    .answer { font-size:14px;color:var(--accent2); }
+    .answer span { color:var(--muted);font-weight:400; }
+    .empty { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:48px;text-align:center;color:var(--muted);font-size:14px; }
+    .empty .emoji { font-size:36px;display:block;margin-bottom:12px; }
+    .count-badge { display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(108,99,255,.18);color:var(--accent2);margin-left:10px; }
+    .nav-link { display:inline-block;margin-top:24px;color:var(--accent2);text-decoration:none;font-size:13px; }
+    .nav-link:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="logo"><h1>EduPortal</h1><p>AI Assistant</p></div>
+  <nav>
+    <a href="/instructor/dashboard"><span class="icon">🏠</span> Dashboard</a>
+    <a href="/chatbot"><span class="icon">🤖</span> Ask Chatbot</a>
+    <a href="/chatbot/history" class="active"><span class="icon">📜</span> Chat History</a>
+  </nav>
+</aside>
+
+<main class="main">
+
+  <div class="page-header">
+    <h2>📜 Chat History</h2>
+    <p>View all your past questions and answers.</p>
+  </div>
+
+  <!-- Search form -->
+  <div class="search-card">
+    <form action="/chatbot/history" method="get" style="display:flex;gap:12px;align-items:flex-end;">
+      <div>
+        <label>Enter Your Name to Load History</label>
+        <input type="text" name="studentName"
+               th:value="${studentName}"
+               placeholder="e.g. student1" required/>
+      </div>
+      <button type="submit">🔍 Load History</button>
+    </form>
+  </div>
+
+  <!-- Results -->
+
+  <!-- No name entered yet -->
+  <div class="empty" th:if="${messages == null}">
+    <span class="emoji">💬</span>
+    Enter your name above to load your chat history.
+  </div>
+
+  <!-- Name entered but no history found -->
+  <div class="empty" th:if="${messages != null and messages.isEmpty()}">
+    <span class="emoji">🤷</span>
+    No chat history found for <strong th:text="${studentName}"></strong>.
+    <br/><br/>
+    <a href="/chatbot" style="color:var(--accent2);">Ask your first question →</a>
+  </div>
+
+  <!-- History found -->
+  <div th:if="${messages != null and !messages.isEmpty()}">
+
+    <div style="margin-bottom:20px;font-size:14px;color:var(--muted);">
+      Showing history for
+      <strong th:text="${studentName}" style="color:var(--text);"></strong>
+      <span class="count-badge" th:text="${messages.size()} + ' chats'"></span>
+    </div>
+
+    <div th:each="msg, stat : ${messages}" class="chat-card">
+      <div class="chat-card-header">
+        <span class="num">Chat #<span th:text="${stat.count}"></span></span>
+        <span class="time" th:text="${#temporals.format(msg.timestamp, 'dd MMM yyyy, hh:mm a')}"></span>
+      </div>
+      <div class="chat-body">
+        <p class="question"><span>You asked: </span><span th:text="${msg.question}"></span></p>
+        <p class="answer"><span>🤖 Answer: </span><span th:text="${msg.answer}"></span></p>
+      </div>
+    </div>
+
+  </div>
+
+  <a class="nav-link" href="/chatbot">⬅ Back to Chatbot</a>
+
+</main>
+</body>
+</html>
