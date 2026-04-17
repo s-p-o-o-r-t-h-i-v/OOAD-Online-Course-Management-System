@@ -1,0 +1,47 @@
+# =========================
+# Maven build folder
+# =========================
+target/
+
+# =========================
+# Compiled Java files
+# =========================
+*.class
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# IDE files
+# =========================
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# =========================
+# Application runtime files
+# =========================
+uploads/
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.swp
