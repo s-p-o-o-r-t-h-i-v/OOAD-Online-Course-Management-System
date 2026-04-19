@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Submit Assignment</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#f6d365,#fda085);
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    background:white;
+    padding:40px;
+    border-radius:10px;
+    width:350px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+    text-align:center;
+}
+
+h2{
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#fda085;
+    border:none;
+    color:white;
+    font-size:16px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#f78c6b;
+}
+
+a{
+    display:block;
+    margin-top:15px;
+    text-decoration:none;
+    color:#f78c6b;
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Submit Assignment</h2>
+
+<form action="/submit-assignment" method="post" enctype="multipart/form-data">
+
+<input type="text" name="studentName" placeholder="Student Name" required>
+
+<input type="file" name="file">
+
+<button type="submit">Submit</button>
+
+</form>
+
+<a href="/dashboard">Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

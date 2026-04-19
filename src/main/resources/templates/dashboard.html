@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>Student Dashboard</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background: linear-gradient(135deg,#667eea,#764ba2);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+background:white;
+padding:40px;
+border-radius:10px;
+width:450px;
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.btn{
+display:block;
+margin:10px 0;
+padding:10px;
+background:#667eea;
+color:white;
+text-decoration:none;
+border-radius:5px;
+font-weight:bold;
+}
+
+.btn:hover{
+background:#5563d1;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+th,td{
+border:1px solid #ddd;
+padding:10px;
+}
+
+th{
+background:#667eea;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Student Dashboard</h2>
+
+<a class="btn" href="/courses">Enroll Course</a>
+
+<a class="btn" href="/assignment">Submit Assignment</a>
+
+<h3>Enrolled Courses</h3>
+
+<table>
+
+<tr>
+<th>Student</th>
+<th>Course</th>
+</tr>
+
+<tr th:each="c : ${courses}">
+<td th:text="${c.studentName}"></td>
+<td th:text="${c.courseName}"></td>
+</tr>
+
+</table>
+
+</div>
+
+</body>
+</html>
