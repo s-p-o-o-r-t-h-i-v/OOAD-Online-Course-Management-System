@@ -10,4 +10,7 @@ public class OoadProjectApplication {
         SpringApplication.run(OoadProjectApplication.class, args);
     }
 
+    public static void main(String[] args) {
+        SpringApplication.run(OoadProjectApplication.class, args);
+    }
 }
