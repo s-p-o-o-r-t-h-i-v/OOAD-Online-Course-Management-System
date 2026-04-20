@@ -14,7 +14,6 @@ public class ChatbotServiceImpl implements ChatbotService {
     @Autowired
     ChatMessageRepository repository;
 
-    // DIP - depends on ChatbotAdapter interface, not RuleBasedChatbot directly
     private ChatbotAdapter chatbotAdapter;
 
     public ChatbotServiceImpl() {
@@ -22,12 +21,12 @@ public class ChatbotServiceImpl implements ChatbotService {
     }
 
     @Override
-    public String askQuestion(String studentName, String question) {
+    public String askQuestion(String studentName, String question, String role) {
 
-        // Step 1 - Get answer via adapter
-        String answer = chatbotAdapter.processQuery(question);
+        // Pass role to adapter so chatbot can give role-aware answers
+        String answer = chatbotAdapter.processQuery(question, role);
 
-        // Step 2 - Save to DB (Feature 3 happens automatically here)
+        // Save to DB
         ChatMessage message = new ChatMessage();
         message.setStudentName(studentName);
         message.setQuestion(question);

@@ -38,7 +38,10 @@
 <aside class="sidebar">
   <div class="logo"><h1>EduPortal</h1><p>AI Assistant</p></div>
   <nav>
-    <a href="/instructor/dashboard"><span class="icon">🏠</span> Dashboard</a>
+    <!-- ✅ Role-aware dashboard link -->
+    <a th:href="${loggedInRole == 'INSTRUCTOR'} ? '/instructor/dashboard' : '/dashboard'">
+        <span class="icon">🏠</span> Dashboard
+    </a>
     <a href="/chatbot" class="active"><span class="icon">🤖</span> Ask Chatbot</a>
     <a href="/chatbot/history"><span class="icon">📜</span> Chat History</a>
   </nav>
