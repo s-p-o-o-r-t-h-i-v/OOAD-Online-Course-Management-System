@@ -57,34 +57,15 @@
 
   <div class="page-header">
     <h2>📜 Chat History</h2>
-    <p>View all your past questions and answers.</p>
+    <p>Your past questions and answers,
+       <strong th:text="${studentName}" style="color:var(--accent2);"></strong>.
+    </p>
   </div>
 
-  <!-- Search form -->
-  <div class="search-card">
-    <form action="/chatbot/history" method="get" style="display:flex;gap:12px;align-items:flex-end;">
-      <div>
-        <label>Enter Your Name to Load History</label>
-        <input type="text" name="studentName"
-               th:value="${studentName}"
-               placeholder="e.g. student1" required/>
-      </div>
-      <button type="submit">🔍 Load History</button>
-    </form>
-  </div>
-
-  <!-- Results -->
-
-  <!-- No name entered yet -->
-  <div class="empty" th:if="${messages == null}">
+  <!-- No history yet -->
+  <div class="empty" th:if="${messages == null or messages.isEmpty()}">
     <span class="emoji">💬</span>
-    Enter your name above to load your chat history.
-  </div>
-
-  <!-- Name entered but no history found -->
-  <div class="empty" th:if="${messages != null and messages.isEmpty()}">
-    <span class="emoji">🤷</span>
-    No chat history found for <strong th:text="${studentName}"></strong>.
+    You haven't asked anything yet.
     <br/><br/>
     <a href="/chatbot" style="color:var(--accent2);">Ask your first question →</a>
   </div>
@@ -93,9 +74,7 @@
   <div th:if="${messages != null and !messages.isEmpty()}">
 
     <div style="margin-bottom:20px;font-size:14px;color:var(--muted);">
-      Showing history for
-      <strong th:text="${studentName}" style="color:var(--text);"></strong>
-      <span class="count-badge" th:text="${messages.size()} + ' chats'"></span>
+      <span class="count-badge" th:text="${messages.size()} + ' conversations'"></span>
     </div>
 
     <div th:each="msg, stat : ${messages}" class="chat-card">
@@ -105,7 +84,7 @@
       </div>
       <div class="chat-body">
         <p class="question"><span>You asked: </span><span th:text="${msg.question}"></span></p>
-        <p class="answer"><span>🤖 Answer: </span><span th:text="${msg.answer}"></span></p>
+        <p class="answer"><span>🤖 </span><span th:text="${msg.answer}"></span></p>
       </div>
     </div>
 

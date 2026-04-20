@@ -50,18 +50,24 @@
   </div>
 
   <div class="card">
-    <form action="/chatbot/ask" method="post">
-      <label>Your Name</label>
-      <input type="text" name="studentName" th:value="${studentName}" placeholder="Enter your name" required/>
-      <label>Your Question</label>
-      <input type="text" name="question" placeholder="e.g. How do I enroll in a course?" required/>
-      <button type="submit">Ask 🤖</button>
-    </form>
-
-    <div class="answer-box" th:if="${answer}">
-      <p class="q">You asked: <span th:text="${question}"></span></p>
-      <p class="a">🤖 <span th:text="${answer}"></span></p>
-    </div>
+    
+      <!-- Show who is logged in -->
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">
+          Logged in as: <strong style="color:var(--accent2);" th:text="${studentName}"></strong>
+      </p>
+    
+      <form action="/chatbot/ask" method="post">
+          <label>Your Question</label>
+          <input type="text" name="question"
+                 placeholder="e.g. How do I submit an assignment?" required/>
+          <button type="submit">Ask 🤖</button>
+      </form>
+    
+      <div class="answer-box" th:if="${answer}">
+          <p class="q">You asked: <span th:text="${question}"></span></p>
+          <p class="a">🤖 <span th:text="${answer}"></span></p>
+      </div>
+    
   </div>
 
   <a class="nav-link" href="/chatbot/history">View Chat History →</a>

@@ -1,5 +1,6 @@
 package ooad.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,6 +72,7 @@ public class AuthController {
     public String login(@RequestParam String email,
             @RequestParam String password,
             @RequestParam(required = false) String role,
+            HttpSession session,
             Model model) {
 
         String selectedRole = normalizeRole(role);
@@ -85,6 +87,11 @@ public class AuthController {
                 model.addAttribute("signupUrl", "/register/" + selectedRole.toLowerCase());
                 return "login";
             }
+
+            // ✅ Save logged-in user's details into session
+            session.setAttribute("loggedInName", user.getName());
+            session.setAttribute("loggedInEmail", user.getEmail());
+            session.setAttribute("loggedInRole", user.getRole());
 
             // Route to admin dashboard if role is ADMIN
             if ("ADMIN".equalsIgnoreCase(user.getRole())) {
