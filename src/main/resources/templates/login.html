@@ -3,7 +3,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<title>Login</title>
+<title th:text="${roleDisplay} + ' Login'">Login</title>
 
 <style>
 
@@ -73,9 +73,11 @@ alert([[${error}]]);
 
 <div class="container">
 
-<h2>Student Login</h2>
+<h2 th:text="${roleDisplay} + ' Login'">Student Login</h2>
 
 <form action="/login" method="post">
+
+<input type="hidden" name="role" th:value="${role}">
 
 <input type="email" name="email" placeholder="Enter Email" required>
 
@@ -85,7 +87,8 @@ alert([[${error}]]);
 
 </form>
 
-<a href="/register">Create Account</a>
+<a th:href="${signupUrl}">Create Account</a>
+<a href="/">Back to Role Selection</a>
 
 </div>
 

@@ -1,19 +1,24 @@
 package ooad.controller;
 
 import ooad.model.*;
+import ooad.repository.NotificationRepository;
 import ooad.service.InstructorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/instructor")
 public class InstructorController {
 
     private final InstructorService service;
+    private final NotificationRepository notificationRepository;
 
-    public InstructorController(InstructorService service) {
+    public InstructorController(InstructorService service, NotificationRepository notificationRepository) {
         this.service = service;
+        this.notificationRepository = notificationRepository;
     }
 
     @GetMapping("/dashboard")
@@ -22,6 +27,8 @@ public class InstructorController {
         model.addAttribute("materials", service.getAllMaterials());
         model.addAttribute("assignments", service.getAllAssignments());
         model.addAttribute("submissions", service.getAllSubmissions());
+        model.addAttribute("notifications",
+                notificationRepository.findBySentToInOrderBySentAtDesc(Arrays.asList("ALL", "INSTRUCTORS")));
         return "instructor/dashboard";
     }
 

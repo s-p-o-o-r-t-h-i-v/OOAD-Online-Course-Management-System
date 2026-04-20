@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0f1117;
+        --surface: #181c27;
+        --surface2: #1e2335;
+        --border: #2a2f45;
+        --accent: #6c63ff;
+        --accent2: #a78bfa;
+        --green: #34d399;
+        --amber: #fbbf24;
+        --red: #f87171;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 28px 0;
+        z-index: 100;
+      }
+      .logo {
+        padding: 0 24px 28px;
+        border-bottom: 1px solid var(--border);
+      }
+      .logo h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 20px;
+        color: var(--accent2);
+      }
+      .logo p {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      nav {
+        padding: 20px 12px;
+        flex: 1;
+      }
+      nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.15s;
+        margin-bottom: 2px;
+      }
+      nav a:hover,
+      nav a.active {
+        background: rgba(108, 99, 255, 0.12);
+        color: var(--accent2);
+      }
+      nav a .icon {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+      }
+      .main {
+        margin-left: 240px;
+        padding: 36px 40px;
+        min-height: 100vh;
+      }
+      .page-header {
+        margin-bottom: 32px;
+      }
+      .page-header h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .page-header p {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 36px;
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+      .stat-card .label {
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+      }
+      .stat-card .value {
+        font-size: 32px;
+        font-weight: 600;
+        margin: 6px 0 2px;
+      }
+      .stat-card .sub {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .stat-card.purple .value {
+        color: var(--accent2);
+      }
+      .stat-card.green .value {
+        color: var(--green);
+      }
+      .stat-card.amber .value {
+        color: var(--amber);
+      }
+      .stat-card.red .value {
+        color: var(--red);
+      }
+      .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 14px;
+      }
+      .actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 36px;
+      }
+      .action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 20px 16px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .action-btn:hover {
+        border-color: var(--accent);
+        background: rgba(108, 99, 255, 0.08);
+        transform: translateY(-1px);
+      }
+      .action-btn .emoji {
+        font-size: 24px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 24px;
+      }
+      .card-header {
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .card-header h3 {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .badge.purple {
+        background: rgba(108, 99, 255, 0.18);
+        color: var(--accent2);
+      }
+      .badge.green {
+        background: rgba(52, 211, 153, 0.15);
+        color: var(--green);
+      }
+      .badge.amber {
+        background: rgba(251, 191, 36, 0.15);
+        color: var(--amber);
+      }
+      .badge.red {
+        background: rgba(248, 113, 113, 0.15);
+        color: var(--red);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        padding: 12px 22px;
+        text-align: left;
+        font-size: 11px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 14px 22px;
+        font-size: 14px;
+        border-bottom: 1px solid rgba(42, 47, 69, 0.5);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: rgba(108, 99, 255, 0.04);
+      }
+      .empty {
+        padding: 32px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .link {
+        color: var(--accent2);
+        text-decoration: none;
+        font-size: 13px;
+      }
+      .link:hover {
+        text-decoration: underline;
+      }
+      .notification-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: min(460px, calc(100vw - 40px));
+        background: rgba(24, 28, 39, 0.98);
+        border: 1px solid var(--border);
+        border-left: 6px solid var(--accent);
+        border-radius: 16px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        padding: 16px;
+        z-index: 9999;
+        animation: toastIn 0.25s ease-out;
+      }
+      .toast-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .toast-header h4 {
+        font-size: 18px;
+        color: var(--text);
+      }
+      .toast-close {
+        border: none;
+        background: rgba(108, 99, 255, 0.16);
+        color: var(--accent2);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+      }
+      .toast-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 260px;
+        overflow: auto;
+      }
+      .toast-item {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .toast-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent2);
+        margin-bottom: 4px;
+      }
+      .toast-message {
+        font-size: 14px;
+        color: var(--text);
+        line-height: 1.45;
+      }
+      @keyframes toastIn {
+        from {
+          transform: translateY(-12px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notification-toast" id="notificationToast" th:if="${notifications != null and !notifications.isEmpty()}">
+      <div class="toast-header">
+        <h4>Notifications</h4>
+        <button class="toast-close" type="button" aria-label="Close notifications" onclick="document.getElementById('notificationToast').style.display='none'">&times;</button>
+      </div>
+      <div class="toast-items">
+        <div class="toast-item" th:each="n,iterStat : ${notifications}" th:if="${iterStat.index < 5}">
+          <div class="toast-title" th:text="${n.title}">Title</div>
+          <div class="toast-message" th:text="${n.message}">Message</div>
+        </div>
+      </div>
+    </div>
+
+    <script th:if="${notifications != null and !notifications.isEmpty()}">
+      setTimeout(function() {
+        var toast = document.getElementById('notificationToast');
+        if (toast) {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(-12px)';
+          toast.style.transition = 'all 0.25s ease';
+          setTimeout(function() { toast.style.display = 'none'; }, 250);
+        }
+      }, 10000);
+    </script>
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>EduPortal</h1>
+        <p>Admin Panel</p>
+      </div>
+      <nav>
+        <a href="/admin/dashboard" class="active"
+          ><span class="icon">🏠</span> Dashboard</a
+        >
+        <a href="/admin/users"><span class="icon">👥</span> Manage Users</a>
+        <a href="/admin/courses"><span class="icon">📚</span> Manage Courses</a>
+        <a href="/admin/reports"><span class="icon">📊</span> Reports</a>
+        <a href="/admin/notifications"
+          ><span class="icon">🔔</span> Notifications</a
+        >
+        <a href="/"><span class="icon">🚪</span> Logout</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="page-header">
+        <h2>Admin Dashboard</h2>
+        <p>System overview — manage users, courses, and communications.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card purple">
+          <div class="label">Total Users</div>
+          <div class="value" th:text="${report['totalUsers']}">0</div>
+          <div class="sub">Registered accounts</div>
+        </div>
+        <div class="stat-card green">
+          <div class="label">Courses</div>
+          <div class="value" th:text="${report['totalCourses']}">0</div>
+          <div class="sub">Active courses</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="label">Enrollments</div>
+          <div class="value" th:text="${report['totalEnrollments']}">0</div>
+          <div class="sub">Total enrollments</div>
+        </div>
+        <div class="stat-card red">
+          <div class="label">Notifications</div>
+          <div class="value" th:text="${report['totalNotifications']}">0</div>
+          <div class="sub">Sent</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="section-title">Quick Actions</div>
+      <div class="actions">
+        <a class="action-btn" href="/admin/users"
+          ><span class="emoji">👥</span> Manage Users</a
+        >
+        <a class="action-btn" href="/admin/courses"
+          ><span class="emoji">📚</span> Manage Courses</a
+        >
+        <a class="action-btn" href="/admin/reports"
+          ><span class="emoji">📊</span> Generate Report</a
+        >
+        <a class="action-btn" href="/admin/notifications"
+          ><span class="emoji">🔔</span> Send Notification</a
+        >
+      </div>
+
+      <!-- Recent Users -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Recent Users</h3>
+          <a href="/admin/users" class="link">View all →</a>
+        </div>
+        <div th:if="${users == null or users.isEmpty()}" class="empty">
+          No users registered yet.
+        </div>
+        <table th:if="${users != null and !users.isEmpty()}">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="u : ${users}">
+              <td th:text="${u.id}">—</td>
+              <td th:text="${u.name}">—</td>
+              <td th:text="${u.email}">—</td>
+              <td>
+                <span
+                  class="badge purple"
+                  th:text="${u.role != null ? u.role : 'STUDENT'}"
+                  >STUDENT</span
+                >
+              </td>
+              <td>
+                <span class="badge green" th:if="${u.active}">Active</span>
+                <span class="badge red" th:if="${!u.active}">Inactive</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Recent Notifications -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Recent Notifications</h3>
+          <a href="/admin/notifications" class="link">View all →</a>
+        </div>
+        <div
+          th:if="${notifications == null or notifications.isEmpty()}"
+          class="empty"
+        >
+          No notifications sent yet.
+        </div>
+        <table th:if="${notifications != null and !notifications.isEmpty()}">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Sent To</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="n : ${notifications}">
+              <td th:text="${n.title}">—</td>
+              <td><span class="badge amber" th:text="${n.sentTo}">—</span></td>
+              <td th:text="${n.sentAt}">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

@@ -10,8 +10,10 @@ import ooad.service.StudentService;
 import ooad.model.Enrollment;
 import ooad.model.Assignment;
 import ooad.repository.AssignmentRepository;
+import ooad.repository.NotificationRepository;
 
 import java.util.List;
+import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,12 +26,17 @@ public class StudentController {
     @Autowired
     AssignmentRepository assignmentRepository;
 
+    @Autowired
+    NotificationRepository notificationRepository;
+
     @GetMapping("/dashboard")
     public String dashboard(Model model){
 
         List<Enrollment> courses = service.getEnrollments();
 
         model.addAttribute("courses", courses);
+        model.addAttribute("notifications",
+                notificationRepository.findBySentToInOrderBySentAtDesc(Arrays.asList("ALL", "STUDENTS")));
 
         return "dashboard";
     }

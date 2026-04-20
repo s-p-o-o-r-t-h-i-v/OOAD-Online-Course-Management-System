@@ -1,37 +1,6 @@
 package ooad.model;
 
 import jakarta.persistence.*;
-
-@Entity
-public class Assignment {
-
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
-
-private String studentName;
-private String fileName;
-
-public Long getId() {
-return id;
-}
-
-public String getStudentName() {
-return studentName;
-}
-
-public void setStudentName(String studentName) {
-this.studentName = studentName;
-}
-
-public String getFileName() {
-return fileName;
-}
-
-public void setFileName(String fileName) {
-this.fileName = fileName;
-}
-
 import java.time.LocalDate;
 
 @Entity
@@ -44,6 +13,8 @@ public class Assignment {
     private String description;
     private LocalDate dueDate;
     private Long courseId;
+    private String studentName;
+    private String fileName;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -55,4 +26,8 @@ public class Assignment {
     public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
     public Long getCourseId() { return courseId; }
     public void setCourseId(Long courseId) { this.courseId = courseId; }
+    public String getStudentName() { return studentName; }
+    public void setStudentName(String studentName) { this.studentName = studentName; }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
 }

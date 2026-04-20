@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>System Reports</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0f1117;
+        --surface: #181c27;
+        --surface2: #1e2335;
+        --border: #2a2f45;
+        --accent: #6c63ff;
+        --accent2: #a78bfa;
+        --green: #34d399;
+        --amber: #fbbf24;
+        --red: #f87171;
+        --text: #e2e8f0;
+        --muted: #8892a4;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 28px 0;
+        z-index: 100;
+      }
+      .logo {
+        padding: 0 24px 28px;
+        border-bottom: 1px solid var(--border);
+      }
+      .logo h1 {
+        font-family: "Playfair Display", serif;
+        font-size: 20px;
+        color: var(--accent2);
+      }
+      .logo p {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      nav {
+        padding: 20px 12px;
+        flex: 1;
+      }
+      nav a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.15s;
+        margin-bottom: 2px;
+      }
+      nav a:hover,
+      nav a.active {
+        background: rgba(108, 99, 255, 0.12);
+        color: var(--accent2);
+      }
+      nav a .icon {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+      }
+      .main {
+        margin-left: 240px;
+        padding: 36px 40px;
+        min-height: 100vh;
+      }
+      .page-header {
+        margin-bottom: 32px;
+      }
+      .page-header h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .page-header p {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 36px;
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 28px 24px;
+      }
+      .stat-card .label {
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 10px;
+      }
+      .stat-card .value {
+        font-size: 48px;
+        font-weight: 700;
+      }
+      .stat-card .desc {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .stat-card.purple .value {
+        color: var(--accent2);
+      }
+      .stat-card.green .value {
+        color: var(--green);
+      }
+      .stat-card.amber .value {
+        color: var(--amber);
+      }
+      .stat-card.red .value {
+        color: var(--red);
+      }
+      .stat-card.blue .value {
+        color: #60a5fa;
+      }
+      .info-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 24px;
+        margin-top: 8px;
+      }
+      .info-box h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--accent2);
+      }
+      .info-box p {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>EduPortal</h1>
+        <p>Admin Panel</p>
+      </div>
+      <nav>
+        <a href="/admin/dashboard"><span class="icon">🏠</span> Dashboard</a>
+        <a href="/admin/users"><span class="icon">👥</span> Manage Users</a>
+        <a href="/admin/courses"><span class="icon">📚</span> Manage Courses</a>
+        <a href="/admin/reports" class="active"
+          ><span class="icon">📊</span> Reports</a
+        >
+        <a href="/admin/notifications"
+          ><span class="icon">🔔</span> Notifications</a
+        >
+        <a href="/"><span class="icon">🚪</span> Logout</a>
+      </nav>
+    </aside>
+    <main class="main">
+      <div class="page-header">
+        <h2>System Reports</h2>
+        <p>Real-time snapshot of platform activity and usage statistics.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat-card purple">
+          <div class="label">Total Users</div>
+          <div class="value" th:text="${report['totalUsers']}">0</div>
+          <div class="desc">All registered accounts</div>
+        </div>
+        <div class="stat-card green">
+          <div class="label">Total Courses</div>
+          <div class="value" th:text="${report['totalCourses']}">0</div>
+          <div class="desc">Created by instructors</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="label">Enrollments</div>
+          <div class="value" th:text="${report['totalEnrollments']}">0</div>
+          <div class="desc">Course enrollments recorded</div>
+        </div>
+        <div class="stat-card red">
+          <div class="label">Submissions</div>
+          <div class="value" th:text="${report['totalSubmissions']}">0</div>
+          <div class="desc">Assignment submissions</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="label">Notifications</div>
+          <div class="value" th:text="${report['totalNotifications']}">0</div>
+          <div class="desc">Admin notifications sent</div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h3>📋 Report Summary</h3>
+        <p>
+          The platform currently has
+          <strong th:text="${report['totalUsers']}">0</strong> registered users
+          across <strong th:text="${report['totalCourses']}">0</strong> active
+          courses. Students have enrolled
+          <strong th:text="${report['totalEnrollments']}">0</strong> times in
+          total, and submitted
+          <strong th:text="${report['totalSubmissions']}">0</strong>
+          assignments. A total of
+          <strong th:text="${report['totalNotifications']}">0</strong>
+          notifications have been dispatched.
+        </p>
+      </div>
+    </main>
+  </body>
+</html>
